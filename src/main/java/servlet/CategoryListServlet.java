@@ -19,9 +19,23 @@ public class CategoryListServlet extends HttpServlet {
             throws ServletException, IOException {
         CategoryDAO categoryDAO = new CategoryDAO();
         List<Map<String, Object>> categoryList = categoryDAO.getAllCategories();
+        
+        // データが取得できているか確認
+        if (categoryList == null) {
+            System.out.println("categoryList is null");
+        } else if (categoryList.isEmpty()) {
+            System.out.println("categoryList is empty");
+        } else {
+            System.out.println("categoryList size: " + categoryList.size());
+        }
 
+        // categoryList をリクエスト属性として設定
         request.setAttribute("categoryList", categoryList);
 
+        // デバッグ出力
+        System.out.println("categoryList in servlet: " + categoryList);
+
+        // JSPにフォワード
         RequestDispatcher dispatcher = request.getRequestDispatcher("/category-list.jsp");
         dispatcher.forward(request, response);
     }
