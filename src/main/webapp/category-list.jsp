@@ -24,16 +24,25 @@ th, td {
 th {
 	background-color: #f2f2f2;
 }
+
+form {
+	text-align: center;
+}
 </style>
 </head>
 <body>
-	<h1 style="text-align: center;">カテゴリ一覧</h1>
+	<h1 style="text-align: center;">Category List</h1>
+
+	<form action="category-register" method="GET">
+		<input type="submit" value="Register New Category"
+			style="width: 200px; height: 40px; font-size: 16px;">
+	</form>
 
 	<%
 	List<Map<String, Object>> categoryList = (List<Map<String, Object>>) request.getAttribute("categoryList");
 
 	if (categoryList == null || categoryList.isEmpty()) {
-		out.println("<p style='text-align: center;'>カテゴリがありません。</p>");
+		out.println("<p style='text-align: center;'>There are no categories.</p>");
 	} else {
 	%>
 	<table>
@@ -61,5 +70,7 @@ th {
 	<%
 	}
 	%>
+
+
 </body>
 </html>

@@ -19,4 +19,14 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>CategoryRegisterServlet</display-name>
+    <servlet-name>CategoryRegisterServlet</servlet-name>
+    <servlet-class>servlet.CategoryRegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>CategoryRegisterServlet</servlet-name>
+    <url-pattern>/CategoryRegisterServlet</url-pattern>
+  </servlet-mapping>
 </web-app>
