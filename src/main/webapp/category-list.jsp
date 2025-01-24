@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" import="java.util.List, java.util.Map"%>
+	pageEncoding="UTF-8" import="java.util.List, model.entity.CategoryBean"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -39,7 +39,7 @@ form {
 	</form>
 
 	<%
-	List<Map<String, Object>> categoryList = (List<Map<String, Object>>) request.getAttribute("categoryList");
+	List<CategoryBean> categoryList = (List<CategoryBean>) request.getAttribute("categoryList");
 
 	if (categoryList == null || categoryList.isEmpty()) {
 		out.println("<p style='text-align: center;'>There are no categories.</p>");
@@ -54,13 +54,11 @@ form {
 		</thead>
 		<tbody>
 			<%
-			for (Map<String, Object> category : categoryList) {
-				Integer id = (Integer) category.get("id");
-				String name = (String) category.get("name");
+			for (CategoryBean category : categoryList) {
 			%>
 			<tr>
-				<td><%=id%></td>
-				<td><%=name%></td>
+				<td><%=category.getId()%></td>
+				<td><%=category.getName()%></td>
 			</tr>
 			<%
 			}

@@ -46,7 +46,7 @@ public class CategoryRegisterServlet extends HttpServlet {
 			return;
 		}
 
-		response.sendRedirect("CategoryListServlet");
+		response.sendRedirect(request.getContextPath() + "/CategoryListServlet");
 	}
 
 	@Override
