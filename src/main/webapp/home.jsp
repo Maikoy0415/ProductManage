@@ -12,7 +12,7 @@
 <div class="mx-auto mt-5" style="width: 300px;">
 	 <h1 class="text-center">Welcome!</h1>
 	 
-	 <form action="<%= request.getContextPath() %>/login" method="get">
+	 <form action="/ProductManage/logout" method="get">
     <button class="btn btn-dark w-100 mt-5">Logout</button>
 </form>
 </div>

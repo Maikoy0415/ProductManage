@@ -1,22 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-	crossorigin="anonymous">
-<title>Login</title>
+	rel="stylesheet">
 </head>
 <body>
 	<div class="mx-auto mt-5" style="width: 400px;">
 		<h1 class="text-center">Login</h1>
 
-		<%-- エラーメッセージの表示 --%>
+		<%-- Display error messages if any --%>
 		<%
 		String errorMessage = (String) request.getAttribute("errorMessage");
 		if (errorMessage != null) {
@@ -28,8 +26,7 @@
 		}
 		%>
 
-		<form action="/ProductManage/login" method="post">
-
+		<form action="<%=request.getContextPath()%>/login" method="post">
 			<div class="mb-3">
 				<label for="email" class="form-label">Email</label> <input
 					type="email" class="form-control" id="email" name="email" required>
@@ -41,6 +38,12 @@
 			</div>
 			<button type="submit" class="btn btn-outline-dark w-100 mt-3">Login</button>
 		</form>
+		<div class="text-center">
+			<p class="mt-3">
+				Don't have an account yet? <a href="/ProductManage/register"
+					class="btn btn-link">Register an account</a>
+			</p>
+		</div>
 	</div>
 
 	<script

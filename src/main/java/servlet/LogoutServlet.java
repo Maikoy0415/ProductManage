@@ -10,15 +10,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/ProductManage/logout")
-
 public class LogoutServlet extends HttpServlet {
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			session.invalidate();
-			System.out.println("Logged out");
-		}
-		response.sendRedirect("/ProductManage/login.jsp");
-	}
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+            System.out.println("Logged out successfully.");
+        }
+        
+        response.sendRedirect(request.getContextPath() + "/login.jsp");
+
+    }
 }

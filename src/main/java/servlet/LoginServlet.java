@@ -18,7 +18,7 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		System.out.println("request method: " + request.getMethod());
-		RequestDispatcher dispatcher = request.getRequestDispatcher(request.getContextPath() + "/login.jsp");
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
 		dispatcher.forward(request, response);
 	}
 
@@ -32,11 +32,11 @@ public class LoginServlet extends HttpServlet {
 		if (user != null) {
 			// success
 			request.getSession().setAttribute("user", user);
-			response.sendRedirect("/home.jsp");
+			response.sendRedirect("/ProductManage/home.jsp");
 		} else {
 			// fail
 			request.setAttribute("errorMessage", "Incorrect email or password.");
-			RequestDispatcher dispatcher = request.getRequestDispatcher(request.getContextPath() + "/login.jsp");
+			RequestDispatcher dispatcher = request.getRequestDispatcher("/login.jsp");
 			dispatcher.forward(request, response);
 		}
 	}
