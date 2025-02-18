@@ -4,52 +4,41 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Category List</title>
-<style>
-table {
-	width: 50%;
-	border-collapse: collapse;
-	margin: 20px auto;
-}
-
-table, th, td {
-	border: 1px solid black;
-}
-
-th, td {
-	padding: 10px;
-	text-align: center;
-}
-
-th {
-	background-color: #f2f2f2;
-}
-
-form {
-	text-align: center;
-}
-</style>
+<title>カテゴリ一覧</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
-<body>
-	<h1 style="text-align: center;">Category List</h1>
+<body class="container mt-4">
 
-	<form action="category-register" method="GET">
-		<input type="submit" value="Register New Category"
-			style="width: 200px; height: 40px; font-size: 16px;">
+	<!-- Logout Button -->
+	<div class="d-flex justify-content-end mb-3">
+		<form action="/ProductManage/logout" method="get">
+			<button class="btn btn-dark btn-small">Logout</button>
+		</form>
+	</div>
+
+	<h1 class="text-center">Category List</h1>
+
+	<form action="category-register" method="GET" class="text-center">
+		<button type="submit" class="btn btn-success mt-3">Register
+			Category</button>
 	</form>
 
 	<%
 	List<CategoryBean> categoryList = (List<CategoryBean>) request.getAttribute("categoryList");
 
 	if (categoryList == null || categoryList.isEmpty()) {
-		out.println("<p style='text-align: center;'>There are no categories.</p>");
+	%>
+	<p class="text-center mt-4">No category</p>
+	<%
 	} else {
 	%>
-	<table>
+	<table class="table table-striped mt-4 w-25 text-center border mx-auto">
 		<thead>
 			<tr>
-				<th>Category ID</th>
-				<th>Category Name</th>
+				<th>ID</th>
+				<th>Name</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -65,10 +54,12 @@ form {
 			%>
 		</tbody>
 	</table>
+	<a href="/ProductManage/product-register"
+		class="btn btn-dark d-block mx-auto w-25 mt-3">Register New
+		Product</a>
 	<%
 	}
 	%>
-
 
 </body>
 </html>

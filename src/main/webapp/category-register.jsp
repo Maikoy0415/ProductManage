@@ -5,30 +5,46 @@
 <head>
 <meta charset="UTF-8">
 <title>Register Category</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css"
+	rel="stylesheet">
 </head>
-<body>
-	<h1 style="text-align: center;">Register Category</h1>
+<body class="container mt-5">
 
-	<form action="category-register" method="POST"
-		style="text-align: center;">
+	<!-- Logout Button -->
+	<div class="d-flex justify-content-end mb-3">
+		<form action="/ProductManage/logout" method="get">
+			<button class="btn btn-dark">Logout</button>
+		</form>
+	</div>
 
-		<input type="text" name="categoryId" placeholder="Enter ID"
-			style="width: 100px; height: 40px; font-size: 16px; padding: 3px;" />
+	<div class="container w-50">
+		<h1 class="text-center mt-4">Register Category</h1>
 
-		<input type="text" name="categoryName" placeholder="Enter Name"
-			style="width: 200px; height: 40px; font-size: 16px; padding: 3px;" />
+		<form action="category-register" method="POST" class="mt-4">
+			<div class="form-group row">
+				<div class="col-12 col-md-8">
+					<input type="text" id="categoryName" name="categoryName"
+						placeholder="Category Name" class="form-control" required>
+				</div>
+				<div class="col-12 col-md-4">
+					<button type="submit" class="btn btn-dark btn-block">Register</button>
+				</div>
+			</div>
+		</form>
 
-		<input type="submit" value="Register"
-			style="width: 100px; height: 50px; font-size: 18px; padding: 10px; margin-top: 20px;" />
-	</form>
+		<%
+		String errorMessage = (String) request.getAttribute("errorMessage");
+		if (errorMessage != null) {
+		%>
+		<div class="alert alert-danger mt-4">
+			<%=errorMessage%>
+		</div>
+		<%
+		}
+		%>
+	</div>
 
-	<%
-	String errorMessage = (String) request.getAttribute("errorMessage");
-	if (errorMessage != null) {
-	%>
-	<p style="color: red; text-align: center;"><%=errorMessage%></p>
-	<%
-	}
-	%>
 </body>
+
 </html>

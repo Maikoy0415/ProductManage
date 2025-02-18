@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.dao.CategoryDAO;
+import model.entity.CategoryBean;
 
 @WebServlet("/category-register")
 public class CategoryRegisterServlet extends HttpServlet {
@@ -16,16 +17,10 @@ public class CategoryRegisterServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		String categoryIdStr = request.getParameter("categoryId");
 		String categoryName = request.getParameter("categoryName");
-
 		String errorMessage = null;
 
-		if (categoryIdStr == null || categoryIdStr.isEmpty()) {
-			errorMessage = "Category ID is required.";
-		} else if (!categoryIdStr.matches("\\d+")) {
-			errorMessage = "Please enter a numeric value for the category ID.";
-		} else if (categoryName == null || categoryName.isEmpty()) {
+		if (categoryName == null || categoryName.isEmpty()) {
 			errorMessage = "Category name is required.";
 		}
 
@@ -35,18 +30,19 @@ public class CategoryRegisterServlet extends HttpServlet {
 			return;
 		}
 
-		int categoryId = Integer.parseInt(categoryIdStr);
+		CategoryBean category = new CategoryBean();
+		category.setName(categoryName);
 
 		CategoryDAO categoryDAO = new CategoryDAO();
 		try {
-			categoryDAO.addCategory(categoryId, categoryName);
+			categoryDAO.addCategory(category);
 		} catch (Exception e) {
 			request.setAttribute("errorMessage", "An error occurred while registering the category.");
 			request.getRequestDispatcher("/category-register.jsp").forward(request, response);
 			return;
 		}
 
-		response.sendRedirect(request.getContextPath() + "/CategoryListServlet");
+		response.sendRedirect(request.getContextPath() + "/category-list");
 	}
 
 	@Override

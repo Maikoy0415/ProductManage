@@ -1,47 +1,64 @@
 package model.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class CategoryBean implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
-    private int id;
-    private String name;
+	private static final long serialVersionUID = 1L;
 
-    // デフォルトコンストラクタ
-    public CategoryBean() {
-    }
+	private int id;
+	private String name;
+	private Timestamp createdAt;
+	private Timestamp updatedAt;
 
-    // 引数付きコンストラクタ
-    public CategoryBean(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+	// Default constructor
+	public CategoryBean() {
+	}
 
-    public int getId() {
-        return id;
-    }
+	// Constructor with parameters
+	public CategoryBean(int id, String name, Timestamp createdAt, Timestamp updatedAt) {
+		this.id = id;
+		this.name = name;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
 
-    public void setId(int id) {
-        this.id = id;
-    }
+	// Getters and setters
+	public int getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public String toString() {
-        return "CategoryBean{id=" + id + ", name='" + name + "'}";
-    }
-    
-//test
-    public static void main(String[] args) {
-        CategoryBean categoryBean = new CategoryBean(1, "Car Brand");
-        System.out.println(categoryBean);
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	@Override
+	public String toString() {
+		return "CategoryBean{id=" + id + ", name='" + name + "', createdAt=" + createdAt + ", updatedAt=" + updatedAt
+				+ "}";
+	}
 }
