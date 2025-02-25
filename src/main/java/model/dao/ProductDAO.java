@@ -54,7 +54,7 @@ public class ProductDAO {
 
 			setProductStatement(stmt, product);
 
-			int rowsAffected = stmt.executeUpdate(); // 更新された行数を取得
+			int rowsAffected = stmt.executeUpdate();
 
 			return rowsAffected > 0;
 		} catch (SQLException | ClassNotFoundException e) {
@@ -65,11 +65,23 @@ public class ProductDAO {
 	}
 
 	public static boolean updateProduct(ProductBean product) {
+		if (product.getId() == 0) {
+			System.out.println("Error: Product ID is missing.");
+			return false;
+		}
+
 		String query = "UPDATE " + TABLE_NAME
 				+ " SET name = ?, description = ?, price = ?, stock_quantity = ?, category_id = ?, supplier_id = ?, updated_at = ? WHERE id = ?";
 		try (Connection connection = ConnectionManager.getConnection();
 				PreparedStatement stmt = connection.prepareStatement(query)) {
-			setProductStatement(stmt, product);
+
+			stmt.setString(1, product.getName());
+			stmt.setString(2, product.getDescription() != null ? product.getDescription() : "");
+			stmt.setInt(3, product.getPrice());
+			stmt.setInt(4, product.getStockQuantity());
+			stmt.setInt(5, product.getCategoryId());
+			stmt.setInt(6, product.getSupplierId());
+			stmt.setTimestamp(7, product.getUpdatedAt());
 			stmt.setInt(8, product.getId());
 			return stmt.executeUpdate() > 0;
 		} catch (SQLException | ClassNotFoundException e) {

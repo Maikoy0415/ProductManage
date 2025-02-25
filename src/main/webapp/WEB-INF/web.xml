@@ -71,4 +71,14 @@
     <servlet-name>ProductDeleteServlet</servlet-name>
     <url-pattern>/product-delete</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ProductEditServlet</display-name>
+    <servlet-name>ProductEditServlet</servlet-name>
+    <servlet-class>servlet.ProductEditServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ProductEditServlet</servlet-name>
+    <url-pattern>/product-edit</url-pattern>
+  </servlet-mapping>
 </web-app>

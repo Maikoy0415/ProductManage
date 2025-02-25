@@ -20,6 +20,9 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 </head>
 <body class="container mt-5">
 
+	<!-- Back Button -->
+		<button type="button" class="btn btn-small btn-outline-secondary float-start" onclick="window.location.href='home.jsp';">Back</button>
+
 	<!-- Logout Button -->
 	<form action="/ProductManage/logout" method="get">
 		<button class="btn btn-dark btn-small float-end">Logout</button>

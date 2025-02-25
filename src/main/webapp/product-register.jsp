@@ -17,6 +17,10 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 	rel="stylesheet">
 </head>
 <body class="container mt-5">
+	<!-- Back Button -->
+	<button type="button"
+		class="btn btn-small btn-outline-secondary float-start"
+		onclick="window.location.href='home.jsp';">Back</button>
 
 	<!-- Logout Button -->
 	<div class="d-flex justify-content-end mb-3">

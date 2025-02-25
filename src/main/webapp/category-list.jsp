@@ -11,12 +11,18 @@
 </head>
 <body class="container mt-4">
 
-	<!-- Logout Button -->
-	<div class="d-flex justify-content-end mb-3">
-		<form action="/ProductManage/logout" method="get">
+	<div class="d-flex justify-content-between mb-3">
+		<!-- Back Button -->
+		<button type="button"
+			class="btn btn-small btn-outline-secondary float-start"
+			onclick="window.location.href='home.jsp';">Back</button>
+
+		<!-- Logout Button -->
+		<form action="/ProductManage/logout" method="get" class="d-flex">
 			<button class="btn btn-dark btn-small">Logout</button>
 		</form>
 	</div>
+
 
 	<h1 class="text-center">Category List</h1>
 
