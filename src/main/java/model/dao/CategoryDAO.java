@@ -42,7 +42,7 @@ public class CategoryDAO {
 		}
 	}
 
-	public static String getCategoryNameById(int categoryId) {
+	public String getCategoryNameById(int categoryId) {
 		String query = "SELECT name FROM categories WHERE id = ?";
 		try (Connection connection = ConnectionManager.getConnection();
 				PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -116,7 +116,7 @@ public class CategoryDAO {
 				PreparedStatement stmt = conn.prepareStatement(sql)) {
 
 			stmt.setString(1, category.getName());
-			stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis())); // Set updated_at
+			stmt.setTimestamp(2, new Timestamp(System.currentTimeMillis())); 
 			stmt.setInt(3, category.getId());
 
 			int rowsAffected = stmt.executeUpdate();

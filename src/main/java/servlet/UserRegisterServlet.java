@@ -12,54 +12,49 @@ import model.dao.UserDAO;
 import model.entity.UserBean;
 import model.entity.UserRole;
 
-
 @WebServlet("/register")
 public class UserRegisterServlet extends HttpServlet {
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    // GETリクエストに対する処理
-	    request.getRequestDispatcher("/register.jsp").forward(request, response); // 登録ページに遷移
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/register.jsp").forward(request, response); // 登録ページに遷移
 	}
-    
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String phoneNumber = request.getParameter("phone_number");
-        String address = request.getParameter("address");
-        String password = request.getParameter("password");
 
-        // パスワードをハッシュ化（後で実装）
-        String hashedPassword = hashPassword(password);
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String email = request.getParameter("email");
+		String firstName = request.getParameter("firstName");
+		String lastName = request.getParameter("lastName");
+		String phoneNumber = request.getParameter("phone_number");
+		String address = request.getParameter("address");
+		String password = request.getParameter("password");
 
-        // UserBeanにデータをセット
-        UserBean user = new UserBean();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setEmail(email);
-        user.setPhoneNumber(phoneNumber);
-        user.setAddress(address);
-        user.setPassword(hashedPassword);
-        user.setRole(UserRole.USER);  // ロールを設定
-        user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+		String hashedPassword = hashPassword(password);
 
-        // DBにユーザーを挿入
-        boolean isInserted = UserDAO.insertUser(user);
+		UserBean user = new UserBean();
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setEmail(email);
+		user.setPhoneNumber(phoneNumber);
+		user.setAddress(address);
+		user.setPassword(hashedPassword);
+		user.setRole(UserRole.USER);
+		user.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+		user.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-        if (isInserted) {
-            response.sendRedirect("/ProductManage/login.jsp"); // 登録成功後にログインページにリダイレクト
-        } else {
-            request.setAttribute("errorMessage", "Registration failed. Please try again.");
-            request.getRequestDispatcher("/register.jsp").forward(request, response);
-        }
-    }
+		UserDAO userDAO = new UserDAO();
+		boolean isInserted = userDAO.insertUser(user);
 
-    // パスワードをハッシュ化するメソッド
-    private String hashPassword(String password) {
-        // パスワードのハッシュ化処理をここに追加
-        return password;  // 仮の処理
-    }
+		if (isInserted) {
+			response.sendRedirect("/ProductManage/login.jsp");
+		} else {
+			request.setAttribute("errorMessage", "Registration failed. Please try again.");
+			request.getRequestDispatcher("/register.jsp").forward(request, response);
+		}
+	}
+
+	private String hashPassword(String password) {
+		return password;
+	}
 }
-

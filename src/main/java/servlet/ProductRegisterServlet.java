@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.servlet.RequestDispatcher;
@@ -10,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.dao.CategoryDAO;
 import model.dao.ProductDAO;
 import model.entity.CategoryBean;
@@ -19,20 +21,39 @@ import model.entity.ProductBean;
 public class ProductRegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	private ProductDAO productDao;
+
+	public ProductRegisterServlet() {
+		CategoryDAO categoryDAO = new CategoryDAO();
+		this.productDao = new ProductDAO(categoryDAO);
+	}
+
+	public ProductRegisterServlet(ProductDAO productDao) {
+		this.productDao = productDao;
+	}
+
+	public void setProductDao(ProductDAO productDao) {
+		this.productDao = productDao;
+	}
+
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("user") == null) {
+			response.sendRedirect(request.getContextPath() + "/login.jsp");
+			return;
+		}
 
 		CategoryDAO categoryDAO = new CategoryDAO();
 		try {
 			List<CategoryBean> categoryList = categoryDAO.getAllCategories();
-
 			if (categoryList != null && !categoryList.isEmpty()) {
 				request.setAttribute("categoryList", categoryList);
 			} else {
 				request.setAttribute("errorMessage", "No categories found.");
 			}
-
 		} catch (Exception e) {
 			request.setAttribute("errorMessage", "Error fetching categories.");
 			e.printStackTrace();
@@ -43,10 +64,15 @@ public class ProductRegisterServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		request.setCharacterEncoding("UTF-8");
+
+		HttpSession session = request.getSession(false);
+		if (session == null || session.getAttribute("user") == null) {
+			response.sendRedirect(request.getContextPath() + "/login.jsp");
+			return;
+		}
 
 		String name = request.getParameter("name");
 		String priceStr = request.getParameter("price");
@@ -54,24 +80,29 @@ public class ProductRegisterServlet extends HttpServlet {
 		String categoryIdStr = request.getParameter("category");
 		String description = request.getParameter("description");
 
+		List<String> errorMessages = new ArrayList<>();
+
 		if (name == null || name.trim().isEmpty()) {
-			request.setAttribute("errorMessage", "Product name is required.");
-		} else if (priceStr == null || priceStr.trim().isEmpty()) {
-			request.setAttribute("errorMessage", "Price is required.");
-		} else if (stockStr == null || stockStr.trim().isEmpty()) {
-			request.setAttribute("errorMessage", "Stock is required.");
-		} else if (categoryIdStr == null || categoryIdStr.trim().isEmpty()) {
-			request.setAttribute("errorMessage", "Select a category.");
+			errorMessages.add("Product name is required.");
+		}
+		if (priceStr == null || priceStr.trim().isEmpty()) {
+			errorMessages.add("Price is required.");
+		}
+		if (stockStr == null || stockStr.trim().isEmpty()) {
+			errorMessages.add("Stock is required.");
+		}
+		if (categoryIdStr == null || categoryIdStr.trim().isEmpty()) {
+			errorMessages.add("Select a category.");
 		}
 
 		if (priceStr != null && !priceStr.trim().isEmpty()) {
 			try {
 				int price = Integer.parseInt(priceStr);
 				if (price <= 0) {
-					request.setAttribute("errorMessage", "Price must be positive values.");
+					errorMessages.add("Price must be positive values.");
 				}
 			} catch (NumberFormatException e) {
-				request.setAttribute("errorMessage", "Price must be a valid number.");
+				errorMessages.add("Price must be a valid number.");
 			}
 		}
 
@@ -79,14 +110,15 @@ public class ProductRegisterServlet extends HttpServlet {
 			try {
 				int stock = Integer.parseInt(stockStr);
 				if (stock < 0) {
-					request.setAttribute("errorMessage", "Stock must be positive values.");
+					errorMessages.add("Stock must be positive values.");
 				}
 			} catch (NumberFormatException e) {
-				request.setAttribute("errorMessage", "Stock must be a valid number.");
+				errorMessages.add("Stock must be a valid number.");
 			}
 		}
 
-		if (request.getAttribute("errorMessage") != null) {
+		if (!errorMessages.isEmpty()) {
+			request.setAttribute("errorMessages", errorMessages);
 			CategoryDAO categoryDAO = new CategoryDAO();
 			try {
 				List<CategoryBean> categoryList = categoryDAO.getAllCategories();
@@ -94,7 +126,6 @@ public class ProductRegisterServlet extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
 			request.getRequestDispatcher("/product-register.jsp").forward(request, response);
 			return;
 		}
@@ -110,17 +141,16 @@ public class ProductRegisterServlet extends HttpServlet {
 			product.setStockQuantity(stock);
 			product.setCategoryId(categoryId);
 			product.setDescription(description);
-			product.setSupplierId(1); // 仮
+			product.setSupplierId(1);
 			product.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 			product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-			boolean isInserted = ProductDAO.addProduct(product);
+			boolean isInserted = productDao.addProduct(request, product);
 
 			if (isInserted) {
 				response.sendRedirect(request.getContextPath() + "/product-list");
 			} else {
 				request.setAttribute("errorMessage", "Product addition failed. Please try again.");
-
 				CategoryDAO categoryDAO = new CategoryDAO();
 				try {
 					List<CategoryBean> categoryList = categoryDAO.getAllCategories();
@@ -132,7 +162,6 @@ public class ProductRegisterServlet extends HttpServlet {
 			}
 		} catch (NumberFormatException e) {
 			request.setAttribute("errorMessage", "Please enter valid numbers.");
-
 			CategoryDAO categoryDAO = new CategoryDAO();
 			try {
 				List<CategoryBean> categoryList = categoryDAO.getAllCategories();
@@ -143,5 +172,4 @@ public class ProductRegisterServlet extends HttpServlet {
 			request.getRequestDispatcher("/product-register.jsp").forward(request, response);
 		}
 	}
-
 }

@@ -14,6 +14,16 @@ import model.entity.UserBean;
 @WebServlet("/ProductManage/login")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private UserDAO userDAO; 
+
+	public LoginServlet() {
+		this.userDAO = new UserDAO();
+	}
+
+	// テスト用のコンストラクタ（依存性注入）
+	public LoginServlet(UserDAO userDAO) {
+		this.userDAO = userDAO;
+	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -22,12 +32,12 @@ public class LoginServlet extends HttpServlet {
 		dispatcher.forward(request, response);
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
 
-		UserBean user = UserDAO.authenticateUser(email, password);
+		UserBean user = userDAO.authenticateUser(email, password); 
 
 		if (user != null) {
 			// success

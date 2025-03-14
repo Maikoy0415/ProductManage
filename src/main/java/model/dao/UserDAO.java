@@ -12,47 +12,44 @@ import model.entity.UserRole;
 
 public class UserDAO {
 
-	// ユーザーIDでユーザーを取得
-	public static UserBean getUserById(int userId) {
+	public UserBean getUserById(int userId) {
 		String sql = "SELECT * FROM users WHERE id = ?";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, userId);
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
-				return mapUser(rs); // UserBeanにマッピング
+				return mapUser(rs);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return null; // ユーザーが見つからない場合
+		return null;
 	}
 
-	// メールアドレスでユーザーを取得
-	public static UserBean getUserByEmail(String email) {
+	public UserBean getUserByEmail(String email) {
 		String sql = "SELECT * FROM users WHERE email = ?";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, email);
 			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
-				return mapUser(rs); // UserBeanにマッピング
+				return mapUser(rs);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return null; // ユーザーが見つからない場合
+		return null;
 	}
 
-	// 全てのユーザーを取得
-	public static List<UserBean> getAllUsers() {
+	public List<UserBean> getAllUsers() {
 		List<UserBean> userList = new ArrayList<>();
 		String sql = "SELECT * FROM users";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				ResultSet rs = pstmt.executeQuery()) {
 			while (rs.next()) {
-				userList.add(mapUser(rs)); // UserBeanにマッピング
+				userList.add(mapUser(rs));
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -60,8 +57,7 @@ public class UserDAO {
 		return userList;
 	}
 
-	// 新しいユーザーを挿入
-	public static boolean insertUser(UserBean user) {
+	public boolean insertUser(UserBean user) {
 		String sql = "INSERT INTO users (first_name, last_name, email, phone_number, address, password, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -75,15 +71,14 @@ public class UserDAO {
 			pstmt.setTimestamp(8, user.getCreatedAt());
 			pstmt.setTimestamp(9, user.getUpdatedAt());
 			int rowsAffected = pstmt.executeUpdate();
-			return rowsAffected > 0; // 成功した場合はtrue
+			return rowsAffected > 0;
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return false; // 挿入失敗
+		return false;
 	}
 
-	// ユーザー情報を更新
-	public static void updateUser(UserBean user) {
+	public void updateUser(UserBean user) {
 		String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone_number = ?, address = ?, password = ?, role = ?, updated_at = ? WHERE id = ?";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -102,8 +97,7 @@ public class UserDAO {
 		}
 	}
 
-	// ユーザーを削除
-	public static void deleteUser(int userId) {
+	public void deleteUser(int userId) {
 		String sql = "DELETE FROM users WHERE id = ?";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -114,25 +108,23 @@ public class UserDAO {
 		}
 	}
 
-	// メールアドレスとパスワードでユーザー認証
-	public static UserBean authenticateUser(String email, String password) {
-	    String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
-	    try (Connection conn = ConnectionManager.getConnection();
-	            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-	        pstmt.setString(1, email);
-	        pstmt.setString(2, password);
-	        ResultSet rs = pstmt.executeQuery();
-	        if (rs.next()) {
-	            return mapUser(rs); // UserBeanにマッピング
-	        }
-	    } catch (SQLException | ClassNotFoundException e) {
-	        e.printStackTrace();
-	    }
-	    return null; // 認証失敗
+	public UserBean authenticateUser(String email, String password) {
+		String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+		try (Connection conn = ConnectionManager.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			ResultSet rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return mapUser(rs);
+			}
+		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
-	// ResultSet を UserBean にマッピング
-	private static UserBean mapUser(ResultSet rs) throws SQLException {
+	private UserBean mapUser(ResultSet rs) throws SQLException {
 		return new UserBean(
 				rs.getInt("id"),
 				rs.getString("first_name"),
