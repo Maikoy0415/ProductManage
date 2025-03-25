@@ -13,8 +13,9 @@
 <title>Home</title>
 </head>
 <body>
+
 	<div class="mx-auto mt-5" style="width: 300px;">
-		<h1 class="text-center">Welcome!</h1>
+		<h2 class="text-center">Welcome, ${user.firstName}!</h2>
 
 		<a href="product-list"
 			class="btn btn-outline-dark w-100 mt-5">Product List</a>

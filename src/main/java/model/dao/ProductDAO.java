@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import model.entity.ProductBean;
-import model.entity.UserBean;
 
 public class ProductDAO {
 	private static final String TABLE_NAME = "products";
@@ -57,19 +57,26 @@ public class ProductDAO {
 
 	public List<ProductBean> getAllProducts() {
 		List<ProductBean> products = new ArrayList<>();
+
 		String query = "SELECT * FROM products";
 		try (Connection connection = ConnectionManager.getConnection();
 				PreparedStatement stmt = connection.prepareStatement(query);
 				ResultSet rs = stmt.executeQuery()) {
+
 			while (rs.next()) {
 				ProductBean product = mapResultSetToProduct(rs);
 
-				String categoryName = categoryDao.getCategoryNameById(product.getCategoryId());
-				product.setCategoryName(categoryName != null ? categoryName : "Unknown");
+				// Check if categoryDao is not null before accessing it
+				if (categoryDao != null) {
+					String categoryName = categoryDao.getCategoryNameById(product.getCategoryId());
+					product.setCategoryName(categoryName != null ? categoryName : "Unknown");
+				} else {
+					product.setCategoryName("Unknown");
+				}
+
 				products.add(product);
 			}
 		} catch (SQLException | ClassNotFoundException e) {
-
 			e.printStackTrace();
 		}
 		return products;
@@ -92,7 +99,7 @@ public class ProductDAO {
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
 		try (Connection connection = ConnectionManager.getConnection();
-				PreparedStatement stmt = connection.prepareStatement(query)) {
+				PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) { 
 
 			connection.setAutoCommit(false);
 
@@ -104,18 +111,22 @@ public class ProductDAO {
 			int rowsAffected = stmt.executeUpdate();
 
 			if (rowsAffected > 0) {
+				try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						product.setId(generatedKeys.getInt(1));
+					}
+				}
 				connection.commit();
 				return true;
 			} else {
-				connection.rollback();
 				return false;
 			}
 
 		} catch (SQLException | ClassNotFoundException e) {
+			System.err.println("Error in addProduct(): " + e.getMessage());
 			e.printStackTrace();
+			return false;
 		}
-
-		return false;
 	}
 
 	private boolean isValidProduct(ProductBean product) {
@@ -143,36 +154,49 @@ public class ProductDAO {
 	}
 
 	public boolean updateProduct(HttpServletRequest request, ProductBean product) {
-		HttpSession session = request.getSession(false);
-		if (session == null) {
-			throw new IllegalStateException("Session is null");
-		}
+		try {
+			// 更新クエリ
+			String query = "UPDATE " + TABLE_NAME
+					+ " SET name = ?, description = ?, price = ?, stock_quantity = ?, category_id = ?, supplier_id = ?, updated_at = ? WHERE id = ?";
 
-		UserBean user = (UserBean) session.getAttribute("user");
-		if (user == null) {
-			throw new IllegalStateException("User is not logged in");
-		}
+			System.out.println("Executing query: " + query); // クエリ内容を出力
 
-		Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-		product.setUpdatedAt(currentTimestamp);
+			try (Connection connection = ConnectionManager.getConnection();
+					PreparedStatement stmt = connection.prepareStatement(query)) {
 
-		String query = "UPDATE " + TABLE_NAME
-				+ " SET name = ?, description = ?, price = ?, stock_quantity = ?, category_id = ?, supplier_id = ?, updated_at = ? WHERE id = ?";
+				// updated_at を現在のタイムスタンプに設定
+				product.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
 
-		try (Connection connection = ConnectionManager.getConnection();
-				PreparedStatement stmt = connection.prepareStatement(query)) {
+				// ステートメントにパラメータを設定
+				setProductStatement(stmt, product);
+				stmt.setTimestamp(7, product.getUpdatedAt()); // updated_at を設定
+				stmt.setInt(8, product.getId()); // ID を設定
 
-			setProductStatement(stmt, product);
-			stmt.setTimestamp(7, product.getUpdatedAt());
-			stmt.setInt(8, product.getId());
+				System.out.println("Updated product ID: " + product.getId()); // 更新される製品のIDを表示
 
-			int rowsAffected = stmt.executeUpdate();
-			return rowsAffected > 0;
-		} catch (SQLException | ClassNotFoundException e) {
+				// クエリの実行
+				int rowsAffected = stmt.executeUpdate();
+				System.out.println("Rows affected: " + rowsAffected); // 影響を受けた行数を出力
+
+				// 影響を受けた行数が0の場合、問題が発生している可能性がある
+				if (rowsAffected == 0) {
+					System.out.println("No rows were updated. Check if the product ID exists in the database.");
+				}
+
+				// 成功した場合は true を返す
+				return rowsAffected > 0;
+
+			} catch (SQLException e) {
+				System.err.println("SQL error while updating product: " + e.getMessage());
+				e.printStackTrace();
+				return false;
+			}
+
+		} catch (Exception e) {
+			System.err.println("Error occurred while updating product: " + e.getMessage());
 			e.printStackTrace();
+			return false;
 		}
-
-		return false;
 	}
 
 	public boolean deleteProduct(int productId) {

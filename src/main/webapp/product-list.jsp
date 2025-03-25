@@ -21,8 +21,10 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 <body class="container mt-5">
 
 	<!-- Back Button -->
-		<button type="button" class="btn btn-small btn-outline-secondary float-start" onclick="window.location.href='home.jsp';">Back</button>
-
+	<button type="button"
+		class="btn btn-small btn-outline-secondary float-start"
+		onclick="window.location.href='home.jsp';">Back</button>
+		
 	<!-- Logout Button -->
 	<form action="/ProductManage/logout" method="get">
 		<button class="btn btn-dark btn-small float-end">Logout</button>
@@ -75,6 +77,8 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 	<table class="table table-striped w-75 mx-auto text-center border">
 		<thead>
 			<tr>
+				<th class="border">Product ID</th>
+				<!-- ID列を追加 -->
 				<th class="border">Product Name</th>
 				<th class="border">Price (Yen)</th>
 				<th class="border">Stock</th>
@@ -89,6 +93,8 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 				for (ProductBean product : productList) {
 			%>
 			<tr>
+				<td class="border"><%=product.getId()%></td>
+				<!-- IDを表示 -->
 				<td class="border"><%=product.getName()%></td>
 				<td class="border"><%=product.getPrice()%></td>
 				<td class="border"><%=product.getStockQuantity()%></td>
@@ -101,16 +107,14 @@ String errorMessage = (String) request.getAttribute("errorMessage");
 					class="btn btn-primary btn-sm">Edit</a>
 					<button class="btn btn-danger btn-sm delete-btn"
 						data-bs-toggle="modal" data-bs-target="#deleteConfirmModal"
-						data-id="<%=product.getId()%>" data-name="<%=product.getName()%>">Delete</button>
-
-				</td>
+						data-id="<%=product.getId()%>" data-name="<%=product.getName()%>">Delete</button></td>
 			</tr>
 			<%
 			}
 			} else {
 			%>
 			<tr>
-				<td colspan="6" class="text-center">No products found</td>
+				<td colspan="7" class="text-center">No products found</td>
 			</tr>
 			<%
 			}

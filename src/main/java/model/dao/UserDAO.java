@@ -33,8 +33,12 @@ public class UserDAO {
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, email);
 			ResultSet rs = pstmt.executeQuery();
+
 			if (rs.next()) {
+				System.out.println("User found in DB: " + rs.getString("email"));
 				return mapUser(rs);
+			} else {
+				System.out.println("User NOT found in DB: " + email); // ログを追加
 			}
 		} catch (SQLException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -109,19 +113,42 @@ public class UserDAO {
 	}
 
 	public UserBean authenticateUser(String email, String password) {
-		String sql = "SELECT * FROM users WHERE email = ? AND password = ?";
+		String sql = "SELECT email, first_name, password FROM users WHERE email = ?";
 		try (Connection conn = ConnectionManager.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
 			pstmt.setString(1, email);
-			pstmt.setString(2, password);
 			ResultSet rs = pstmt.executeQuery();
+			System.out.println("Query executed for email: " + email); // デバッグログ
+
 			if (rs.next()) {
-				return mapUser(rs);
+				String dbPassword = rs.getString("password").trim();
+				String inputPassword = password.trim();
+				System.out.println("DB Password: " + dbPassword);
+				System.out.println("Input Password: " + inputPassword);
+
+				if (dbPassword.equals(inputPassword)) {
+					// UserBeanを作成して `firstName` をセット
+					UserBean user = new UserBean();
+					user.setEmail(rs.getString("email"));
+					user.setFirstName(rs.getString("first_name")); // ← first_name をセット
+					System.out
+							.println("User authenticated: " + user.getEmail() + ", First Name: " + user.getFirstName());
+					return user;
+				} else {
+					System.out.println("Password does NOT match!");
+				}
+			} else {
+				System.out.println("User not found: " + email);
 			}
-		} catch (SQLException | ClassNotFoundException e) {
+		} catch (SQLException e) {
+			System.out.println("SQL Error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("Class Not Found Error: " + e.getMessage());
 			e.printStackTrace();
 		}
-		return null;
+		return null; // ユーザーが見つからないか、パスワードが一致しない場合はnullを返す
 	}
 
 	private UserBean mapUser(ResultSet rs) throws SQLException {

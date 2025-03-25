@@ -19,6 +19,11 @@ public class UserBean implements Serializable {
 
 	public UserBean() {
 	}
+	
+	public UserBean(String email, String password) {
+	    this.email = email;
+	    this.password = password;
+	}
 
 	public UserBean(int id, String firstName, String lastName, String email, String phoneNumber,
 			String address, String password, UserRole role, Timestamp createdAt, Timestamp updatedAt) {

@@ -70,8 +70,8 @@ public class ProductRegisterServlet extends HttpServlet {
 
 		HttpSession session = request.getSession(false);
 		if (session == null || session.getAttribute("user") == null) {
-			response.sendRedirect(request.getContextPath() + "/login.jsp");
-			return;
+		    response.sendRedirect(request.getContextPath() + "/login.jsp");
+		    return;
 		}
 
 		String name = request.getParameter("name");
